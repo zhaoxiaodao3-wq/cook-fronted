@@ -2,6 +2,7 @@ import { defineConfig } from 'vite'
 import path from 'path'
 import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
+import cssInjectedByJsPlugin from 'vite-plugin-css-injected-by-js'
 
 
 function figmaAssetResolver() {
@@ -23,7 +24,9 @@ function wechatWebViewCompat() {
     transformIndexHtml: {
       order: 'post' as const,
       handler(html: string) {
-        return html.replace(/\s+crossorigin/g, '')
+        return html
+          .replace(/\s+crossorigin/g, '')
+          .replace(/<link rel="stylesheet"[^>]*>\s*/g, '')
       },
     },
   }
@@ -32,12 +35,18 @@ function wechatWebViewCompat() {
 export default defineConfig({
   plugins: [
     figmaAssetResolver(),
+    cssInjectedByJsPlugin(),
     wechatWebViewCompat(),
     // The React and Tailwind plugins are both required for Make, even if
     // Tailwind is not being actively used – do not remove them
     react(),
     tailwindcss(),
   ],
+  build: {
+    // 降低 CSS 语法版本，兼容微信 X5 内核
+    cssTarget: 'chrome61',
+    target: 'es2015',
+  },
   resolve: {
     alias: {
       // Alias @ to the src directory
