@@ -16,9 +16,23 @@ function figmaAssetResolver() {
   }
 }
 
+/** 微信小程序 web-view 对 crossorigin  stylesheet 支持差，需移除 */
+function wechatWebViewCompat() {
+  return {
+    name: 'wechat-webview-compat',
+    transformIndexHtml: {
+      order: 'post' as const,
+      handler(html: string) {
+        return html.replace(/\s+crossorigin/g, '')
+      },
+    },
+  }
+}
+
 export default defineConfig({
   plugins: [
     figmaAssetResolver(),
+    wechatWebViewCompat(),
     // The React and Tailwind plugins are both required for Make, even if
     // Tailwind is not being actively used – do not remove them
     react(),
