@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
   # Recipe Sharing Platform PRD
 
@@ -9,3 +10,6 @@
 
   Run `npm run dev` to start the development server.
   
+=======
+# cook-fronted
+>>>>>>> c9f917516ccc260e10308acd1736144748592b69
