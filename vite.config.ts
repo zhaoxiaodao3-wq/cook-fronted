@@ -6,6 +6,9 @@ import legacy from '@vitejs/plugin-legacy'
 import cssInjectedByJsPlugin from 'vite-plugin-css-injected-by-js'
 
 
+import { cloudflare } from "@cloudflare/vite-plugin";
+
+
 function figmaAssetResolver() {
   return {
     name: 'figma-asset-resolver',
@@ -27,10 +30,10 @@ function wechatWebViewCompat() {
       handler(html: string) {
         return html
           .replace(/\s+crossorigin/g, '')
-          .replace(/<link rel="stylesheet"[^>]*>\s*/g, '')
+          .replace(/<link rel="stylesheet"[^>]*>\s*/g, '');
       },
     },
-  }
+  };
 }
 
 export default defineConfig(({ mode }) => {
@@ -51,6 +54,7 @@ export default defineConfig(({ mode }) => {
       targets: ['chrome >= 61', 'ios >= 11', 'android >= 5'],
       modernPolyfills: true,
     }),
+    cloudflare()
   ],
   build: {
     cssTarget: 'chrome61',
@@ -66,5 +70,5 @@ export default defineConfig(({ mode }) => {
 
   // File types to support raw imports. Never add .css, .tsx, or .ts files to this.
   assetsInclude: ['**/*.svg', '**/*.csv'],
-  }
+  };
 })
