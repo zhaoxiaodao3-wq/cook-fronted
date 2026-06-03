@@ -2,6 +2,7 @@ import { defineConfig } from 'vite'
 import path from 'path'
 import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
+import legacy from '@vitejs/plugin-legacy'
 import cssInjectedByJsPlugin from 'vite-plugin-css-injected-by-js'
 
 
@@ -33,6 +34,8 @@ function wechatWebViewCompat() {
 }
 
 export default defineConfig({
+  // 相对路径，兼容腾讯云静态托管（避免 /assets/ 绝对路径 404）
+  base: './',
   plugins: [
     figmaAssetResolver(),
     cssInjectedByJsPlugin(),
@@ -41,11 +44,16 @@ export default defineConfig({
     // Tailwind is not being actively used – do not remove them
     react(),
     tailwindcss(),
+    // 微信 web-view（X5 内核）对 type="module" 支持差，生成 nomodule 兼容包
+    legacy({
+      targets: ['chrome >= 61', 'ios >= 11', 'android >= 5'],
+      modernPolyfills: true,
+    }),
   ],
   build: {
-    // 降低 CSS 语法版本，兼容微信 X5 内核
     cssTarget: 'chrome61',
     target: 'es2015',
+    modulePreload: false,
   },
   resolve: {
     alias: {
