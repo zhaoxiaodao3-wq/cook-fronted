@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite'
+import { defineConfig, loadEnv } from 'vite'
 import path from 'path'
 import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
@@ -33,9 +33,11 @@ function wechatWebViewCompat() {
   }
 }
 
-export default defineConfig({
-  // 相对路径，兼容腾讯云静态托管（避免 /assets/ 绝对路径 404）
-  base: './',
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), '')
+  return {
+  // 腾讯云部署在 /cook-frontend/ 子目录；本地开发用 /
+  base: env.VITE_APP_BASE || '/',
   plugins: [
     figmaAssetResolver(),
     cssInjectedByJsPlugin(),
@@ -64,4 +66,5 @@ export default defineConfig({
 
   // File types to support raw imports. Never add .css, .tsx, or .ts files to this.
   assetsInclude: ['**/*.svg', '**/*.csv'],
+  }
 })
